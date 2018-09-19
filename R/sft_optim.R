@@ -1,0 +1,87 @@
+#' Make split softening optimized with Nelder-Mead.
+#'
+#' This softening configures all parameters in the tree
+#' with optimization method Nelder-Mead to minimize the given `miss' function.
+#'
+#' @param tr The soft tree
+#' @param d The data set to be used in intialization for determining data boundaries
+#'    and in optimization step to evaluate the objective function on the predictions
+#'    on this data set by the soft tree with updated softening parameters.
+#' @param miss.fn Function to provide the value of the objective function for optimization.
+#'
+#'    The function obtains as an argument the matrix of class probabilities
+#'    as returned by \code{\link{predictSoftsplits}}
+#'    when making predictions for the data set \code{d} using the soft tree \code{tr}
+#'    but with some softening parameters reset within optimization procedure.
+#'    The function is expected to return one numeric value;
+#'    this value is minimized by the optimization method.
+#' @param verbosity The verbosity level configures how many additional information is printed
+#' @return The soft tree with the new softening parameters
+#'
+#' @export
+softening.optimized <- function( tr, d, miss.fn, verbosity=0 ) {
+  if (requireNamespace("gsl")) {
+    split.index <- tr$ncat %in% c( -1L, 1L )
+    split.count <- sum(split.index)
+    bounds <- tree.data.bounds( tr, d )
+    widths <- data.frame( lb=tr$splits-bounds$lb, ub=bounds$ub-tr$splits )
+    new.widths <- c(widths$lb[split.index],widths$ub[split.index])/2
+    scale <- new.widths
+    bad.scale.index <- (scale<=0)
+    if ( any( bad.scale.index ) ) {
+      if ( verbosity > 0 )
+      {
+        print( "Fixing zero scale!!" )
+      }
+      if ( verbosity > 5 )
+      {
+        print( scale )
+      }
+      scale[bad.scale.index] <- 1E-4
+    }
+
+    #test.para <- new.widths
+    #print(sprintf("test value: %f", eval.attached(c(tr$splits[split.index]-test.para[1:split.count],
+    #              tr$splits[split.index]+test.para[(split.count+1):(2*split.count)]))))
+    softsplits.params <- function( para ) {
+      transformed.para <- scale*para^2
+      return( c(tr$splits[split.index]-transformed.para[1:split.count],
+            tr$splits[split.index]+transformed.para[(split.count+1):(2*split.count)]) )
+    }
+    eval.sq <- function(para) {
+      tr.para <- softsplits.params( para )
+      tr$lb[split.index] <- tr.para[1:split.count]
+      tr$ub[split.index] <- tr.para[(split.count+1):(2*split.count)]
+      return( miss.fn(predictSoftsplits(tr, d)) )
+    }
+
+    para.ini <- rep( 1, length(new.widths) )
+    iteration.count <- (200*split.count)
+    if ( verbosity > 3 ) {
+      print(sprintf("optimizing bounds using NM, in %d iterations. Initial value = %f",iteration.count,eval.sq(para.ini)))
+    }
+    optim.state <- gsl::multimin.init(para.ini,eval.sq,method="nm")
+    for (i in 1:iteration.count) {
+      optim.state <- gsl::multimin.iterate(optim.state)
+      if ( verbosity > 4 ) {
+        if ( 0 == i %% 100 ) print(sprintf("after iteration %d: value = %f", i, optim.state$f))
+      }
+    }
+    if ( verbosity > 3 ) {
+      print(sprintf("optimization done, value = %f",optim.state$f))
+    }
+    
+    ssp <- softsplits.params( optim.state$x )
+    tr$lb[split.index] <- ssp[1:split.count]
+    tr$ub[split.index] <- ssp[(split.count+1):(2*split.count)]
+    return(tr)
+  } else {
+    warning( "To use the Nelder-Mead optimization method for softening the package `gsl' is required." )
+    if ( verbosity > 0 )
+    {
+      print( "Returning NULL!!" )
+    }
+    return( NULL )
+  }
+}
+
