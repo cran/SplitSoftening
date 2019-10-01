@@ -32,10 +32,15 @@ Softening parameters may be set to the `soft tree' structure.
 The package offers the following functions for this purpose:
 \itemize{
 	\item\code{\link{softening.by.data.range}}
+	\item\code{\link{softening.by.esd}}
 	\item\code{\link{softening.optimized}}
 	\item\code{\link{soften}}
 }
 
 A softened tree might be used to obtain a prediction for a dataset
 using the \code{\link{predictSoftsplits}} function.
+}
+\references{
+\enc{Dvořák}{Dvorak}, J. (2019), \emph{Classification trees with soft splits optimized for ranking} <doi:10.1007/s00180-019-00867-1>
+\url{https://rdcu.be/bkeW2}
 }

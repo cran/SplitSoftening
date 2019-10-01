@@ -14,18 +14,24 @@ auc.trapezoid <- function(predictions, labels) {
 
 #' Create a `soft tree' structure with softening parameters set
 #' using one of the named method.
-
+#'
+#' This is a convenience method implemented over \code{\link{softsplits}}
+#' and the softening functions from this package.
+#'
 #' @param fit A classification tree - either an object \code{tree} which represents a classification tree,
 #' or already a `soft tree' like created by the \code{\link{softsplits}} function.
-#' @param ds A data frame used for softening
+#' @param ds A data frame used as training data for softening
 #' @param method A name of softening method.
-#'  One of: "DR0", "DR1", "DR2", ..., "optim_d", "optim_d^2", "optim_d^4", "optim_auc"
+#'  One of: "DR0", "DR1", "DR2", ..., "ESD", "C4.5", "optim_d", "optim_d^2", "optim_d^4", "optim_auc"
 #'
 #'  The 'method = "DR\emph{x}"' for some number \emph{x}: The softening parameters are set
 #'  according to `data ranges' appropriate to tree nodes.
 #'  The parameters are configured such that in each node the distance of the boundary of the softened area from split value is
 #'  \eqn{2^{-x}r}, where \eqn{r} is the distance from the split value to the furthest data point in the tree node
 #'  projected to the direction from the split value to the boundary.
+#'
+#'  The 'method = "ESD"' sets boundaries of the softening using error standard deviation.
+#'  This is how C4.5 method sets "probabilistic splits"; for that reason value \code{"C4.5"} is an alias for \code{"ESD"}.
 #'
 #'  The 'method = "optim_d^\emph{q}"' for some number \emph{q}: The softening parameters are set
 #'  by optimization process which minimizes \eqn{\code{mean}((1.0-p)^q)} where \eqn{p} is for each data point in 
@@ -38,10 +44,8 @@ auc.trapezoid <- function(predictions, labels) {
 #'  as given in the parameter \code{fit},
 #'  but with softening parameters set using the given method.
 #'
-#' This is a convenience method implemented over \code{\link{softsplits}}
-#' and the softening functions from this package.
-#'
 #' @seealso \code{\link{predictSoftsplits}}.
+#' @importFrom "stats" "terms"
 #' @export
 soften <- function( fit, ds, method ) {
   if (inherits(fit, "tree") || inherits(fit, "rpart")) {
@@ -51,8 +55,8 @@ soften <- function( fit, ds, method ) {
     if ( ( "DR" == substring(method, 0, 2) ) && !is.na(as.numeric(substring(method, 3))) ) {
       return( softening.by.data.range(fit, ds, 2.0^-as.numeric(substring(method, 3))) )
     }
-    if ( "C4.5" == method ) {
-      stop( paste("Not implemented method:", method) )
+    if ( "ESD" == method || "C4.5" == method ) {
+      return( softening.by.esd(fit, ds) )
     }
     if ( "optim_" == substring(method, 0, 6) ) {
       yvar.name <- as.character(attr(attr(fit, "terms"), "variables")[-1L][[1]])
@@ -81,7 +85,7 @@ soften <- function( fit, ds, method ) {
         }
       }
       if ( !is.null(miss) ) {
-        return( softening.optimized( fit, ds, miss, verbosity=5 ) )
+        return( softening.optimized( fit, ds, miss, verbosity=5, implementation="R" ) )
       }
     }
     return( NULL )

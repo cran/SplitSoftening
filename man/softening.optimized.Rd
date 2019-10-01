@@ -4,7 +4,8 @@
 \alias{softening.optimized}
 \title{Make split softening optimized with Nelder-Mead.}
 \usage{
-softening.optimized(tr, d, miss.fn, verbosity = 0)
+softening.optimized(tr, d, miss.fn, verbosity = 0, implementation = c("gsl",
+  "R"))
 }
 \arguments{
 \item{tr}{The soft tree}
@@ -23,6 +24,14 @@ on this data set by the soft tree with updated softening parameters.}
    this value is minimized by the optimization method.}
 
 \item{verbosity}{The verbosity level configures how many additional information is printed}
+
+\item{implementation}{Indentify implementation of optimizer.
+
+ \itemize{
+   \item{\code{"gsl"}}{ uses \code{multimin} function from \code{gsl} package.
+     Note: In the current version (2.1-6) of \code{gsl} package this function does not work.}
+   \item{\code{"R"}}{ uses \code{optim} - the standard optimization function in R.}
+ }}
 }
 \value{
 The soft tree with the new softening parameters
