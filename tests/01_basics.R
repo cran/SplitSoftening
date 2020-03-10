@@ -53,7 +53,7 @@ predictSoftsplitsAlt <- function(fit, newdata)
 } 
 
 create.data.gauss2 <- function() {
-	rbind( data.frame( matrix( -1 + rnorm( 1000 ), ncol=2 ), Y="neg" ), data.frame( matrix( 1 + rnorm( 1000 ), ncol=2 ), Y="pos" ) )
+	rbind( data.frame( matrix( -1 + rnorm( 1000 ), ncol=2 ), Y=factor( "neg" ) ), data.frame( matrix( 1 + rnorm( 1000 ), ncol=2 ), Y=factor( "pos" ) ) )
 }
 
 set.softening <- function(model, boundary.dist=1.0) {

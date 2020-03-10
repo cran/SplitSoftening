@@ -1,4 +1,4 @@
-9c6929b72211e6107aca13286ae55e3b *DESCRIPTION
+fb64f52760975b7da50792e1015585cb *DESCRIPTION
 3f712ca97e776699cf046a616458eac1 *NAMESPACE
 868a9777c1230f7231a28dfc087ae7ef *R/SplitSoftening.R
 89a22f9649820a808d9ef929554acd7e *R/bounds_by_esd.R
@@ -19,4 +19,4 @@ a95f1c6773b51965734fec45284ac31d *src/SplitSoftening_init.c
 bdfe1decfc4a1233d7c82b6d84ac414e *src/auc_trapezoid.c
 e19aeb51fa76af77ac783a944dbc67a4 *src/bound_by_esd.c
 c889e43876eff9106a8d3cb6cec48243 *src/pred_soft.c
-1d8b3be0441bf2d388bb7f7d2f73d17a *tests/01_basics.R
+7940328f0df41787c52799d72c19a291 *tests/01_basics.R
