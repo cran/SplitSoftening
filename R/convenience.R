@@ -39,6 +39,9 @@ auc.trapezoid <- function(predictions, labels) {
 #'
 #'  If 'method = "optim_auc"': The classification tree \code{fit} must perform prediction to two classes.
 #'  The value of the `area under ROC curve' computed on the data set \code{ds} is maximized by optimization.
+#' @param control List of additional configuration paramaters. Possible members in the list are:
+#'  \code{verbosity}, \code{implementation}, \code{iteration.count}, \code{sft.ini},
+#'  which correspond to the paramaters of \code{\link{softening.optimized}}.
 #'
 #' @return The `soft tree' structure representing the same tree structure
 #'  as given in the parameter \code{fit},
@@ -47,7 +50,7 @@ auc.trapezoid <- function(predictions, labels) {
 #' @seealso \code{\link{predictSoftsplits}}.
 #' @importFrom "stats" "terms"
 #' @export
-soften <- function( fit, ds, method ) {
+soften <- function( fit, ds, method, control=NULL ) {
   if (inherits(fit, "tree") || inherits(fit, "rpart")) {
     fit <- softsplits(fit)
   }
@@ -85,7 +88,16 @@ soften <- function( fit, ds, method ) {
         }
       }
       if ( !is.null(miss) ) {
-        return( softening.optimized( fit, ds, miss, verbosity=5, implementation="R" ) )
+        defaults <- list(verbosity=5, implementation="R", iteration.count=NULL, sft.ini=1)
+        if (is.null(control)) {
+          control <- defaults
+        } else {
+          if (!all(names(control) %in% names(defaults))) {
+            stop("Unknown elements in control")
+          }
+          control <- c(control, defaults[!(names(defaults) %in% names(control))])
+        }
+        return( softening.optimized( fit, ds, miss, verbosity=control$verbosity, implementation=control$implementation, iteration.count=control$iteration.count, sft.ini=control$sft.ini) )
       }
     }
     return( NULL )

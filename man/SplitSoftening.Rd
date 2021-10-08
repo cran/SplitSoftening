@@ -3,7 +3,6 @@
 \docType{package}
 \name{SplitSoftening}
 \alias{SplitSoftening}
-\alias{SplitSoftening-package}
 \title{Package: Softening splits in classification trees}
 \description{
 The basic idea of split softening is to modify the process of classification
@@ -42,5 +41,5 @@ using the \code{\link{predictSoftsplits}} function.
 }
 \references{
 \enc{Dvořák}{Dvorak}, J. (2019), \emph{Classification trees with soft splits optimized for ranking} <doi:10.1007/s00180-019-00867-1>
-\url{https://rdcu.be/bkeW2}
+\code{https://rdcu.be/bkeW2}
 }

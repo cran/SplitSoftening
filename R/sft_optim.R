@@ -17,6 +17,8 @@
 #'    this value is minimized by the optimization method.
 #' @param verbosity The verbosity level configures how many additional information is printed
 #' @param implementation Indentify implementation of optimizer.
+#' @param iteration.count Number of optimizer iterations.
+#' @param sft.ini Parameter of softening used as the initial value for the optimization.
 #'
 #'  \itemize{
 #'    \item{\code{"gsl"}}{ uses \code{multimin} function from \code{gsl} package.
@@ -28,7 +30,7 @@
 #'
 #' @importFrom "stats" "optim"
 #' @export
-softening.optimized <- function( tr, d, miss.fn, verbosity=0, implementation=c("gsl", "R") ) {
+softening.optimized <- function( tr, d, miss.fn, verbosity=0, implementation=c("gsl", "R"), iteration.count=NULL, sft.ini=1 ) {
   if (implementation=="gsl" && !requireNamespace("gsl")) {
     stop( "To use the Nelder-Mead optimization method for softening when the implementation argument is \"gsl\" the package `gsl' is required." )
   }
@@ -66,8 +68,10 @@ softening.optimized <- function( tr, d, miss.fn, verbosity=0, implementation=c("
     return( miss.fn(predictSoftsplits(tr, d)) )
   }
 
-  para.ini <- rep( 1, length(new.widths) )
-  iteration.count <- (200*split.count)
+  para.ini <- rep_len( sft.ini, length(new.widths) )
+  if (is.null(iteration.count)) {
+      iteration.count <- (200*split.count)
+  }
 
   if ( verbosity > 3 ) {
     print(sprintf("optimizing bounds using NM, in %d iterations. Initial value = %f",iteration.count,eval.sq(para.ini)))
@@ -83,7 +87,7 @@ softening.optimized <- function( tr, d, miss.fn, verbosity=0, implementation=c("
     para.opt <- optim.state$x
     value <- optim.state$f
   } else if (implementation=="R") {
-    optim.result <- optim(para.ini, eval.sq, method="Nelder-Mead", control=list(trace=verbosity, maxit=iteration.count))
+    optim.result <- optim(para.ini, eval.sq, method="Nelder-Mead", control=list(trace=max(0, verbosity-4), maxit=iteration.count))
     para.opt <- optim.result$par
     value <- optim.result$value
   } else {

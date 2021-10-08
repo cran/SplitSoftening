@@ -35,7 +35,7 @@
 #'
 #' @references
 #' \enc{Dvořák}{Dvorak}, J. (2019), \emph{Classification trees with soft splits optimized for ranking} <doi:10.1007/s00180-019-00867-1>
-#' \url{https://rdcu.be/bkeW2}
+#' \code{https://rdcu.be/bkeW2}
 #'
 #' @docType package
 #' @name SplitSoftening

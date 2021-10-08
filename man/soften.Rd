@@ -5,7 +5,7 @@
 \title{Create a `soft tree' structure with softening parameters set
 using one of the named method.}
 \usage{
-soften(fit, ds, method)
+soften(fit, ds, method, control = NULL)
 }
 \arguments{
 \item{fit}{A classification tree - either an object \code{tree} which represents a classification tree,
@@ -31,6 +31,10 @@ or already a `soft tree' like created by the \code{\link{softsplits}} function.}
 
  If 'method = "optim_auc"': The classification tree \code{fit} must perform prediction to two classes.
  The value of the `area under ROC curve' computed on the data set \code{ds} is maximized by optimization.}
+
+\item{control}{List of additional configuration paramaters. Possible members in the list are:
+\code{verbosity}, \code{implementation}, \code{iteration.count}, \code{sft.ini},
+which correspond to the paramaters of \code{\link{softening.optimized}}.}
 }
 \value{
 The `soft tree' structure representing the same tree structure
