@@ -20,9 +20,8 @@
 #' @param iteration.count Number of optimizer iterations.
 #' @param sft.ini Parameter of softening used as the initial value for the optimization.
 #'
-#'  \itemize{
-#'    \item{\code{"gsl"}}{ uses \code{multimin} function from \code{gsl} package.
-#'      Note: In the current version (2.1-6) of \code{gsl} package this function does not work.}
+#'  \describe{
+#'    \item{\code{"gsl"}}{ uses \code{multimin} function from \code{gsl} package.}
 #'    \item{\code{"R"}}{ uses \code{optim} - the standard optimization function in R.}
 #'  }
 #'

@@ -84,10 +84,10 @@ void bounds_by_esd(double *data, int *class, int *ndata, int *dim,
 	int ts_count = ndata[0];
 	int node, i, split_data_index;
 	int Class1, Class2, leftBranch, rightBranch, lowersBranch, uppersBranch;
-	double *for_sort = Calloc(ts_count, double); /* buffer for sorting */
-	int *index = Calloc(ts_count, int); /* defines order of sorted data */
-	int *local_index = Calloc(ts_count, int); /* used for sorting a part of data */
-	int *aux_index = Calloc(ts_count, int);
+	double *for_sort = R_Calloc(ts_count, double); /* buffer for sorting */
+	int *index = R_Calloc(ts_count, int); /* defines order of sorted data */
+	int *local_index = R_Calloc(ts_count, int); /* used for sorting a part of data */
+	int *aux_index = R_Calloc(ts_count, int);
 	int split_count = treesize[0]/2;
 	/* The following three arrays indicate for each split the data cases
 	   that go through the split (in the nonsoft version of the tree)
@@ -99,13 +99,13 @@ void bounds_by_esd(double *data, int *class, int *ndata, int *dim,
 	   The value of split_data_index grows during tracing the tree
 	   from 1 to split_count.
 	*/ 
-	int *split_indices = Calloc(split_count, int);
-	int *datarange_starts = Calloc(split_count, int);
-	int *datarange_sizes = Calloc(split_count, int);
+	int *split_indices = R_Calloc(split_count, int);
+	int *datarange_starts = R_Calloc(split_count, int);
+	int *datarange_sizes = R_Calloc(split_count, int);
 
-	int *LHSErr = Calloc(ts_count, int);
-	int *RHSErr = Calloc(ts_count, int);
-	int *ThreshErrs = Calloc(ts_count, int);
+	int *LHSErr = R_Calloc(ts_count, int);
+	int *RHSErr = R_Calloc(ts_count, int);
+	int *ThreshErrs = R_Calloc(ts_count, int);
 	float Se, Limit, Lower, Upper;
 	int Errors, BaseErrors, LastI;
 	Boolean LeftThresh=false;
@@ -209,13 +209,14 @@ void bounds_by_esd(double *data, int *class, int *ndata, int *dim,
 		LastI = 0;
 		Lower = Min(splits[node], data[ndata[0]*var[node]+index[ts_min+LastI]]);
 		Upper = Max(splits[node], data[ndata[0]*var[node]+index[ts_min+ts_count-1]]);
-		while ( data[ndata[0]*var[node]+index[ts_min+LastI+1]]
+		while ( LastI < (ts_count-1) &&
+				data[ndata[0]*var[node]+index[ts_min+LastI+1]]
 			 == data[ndata[0]*var[node]+index[ts_min+LastI]] ) LastI++;
 
 		while ( LastI < (ts_count-1) )
 		{
 			i = LastI + 1;
-			while ( i < (ts_min+ts_count-1) &&
+			while ( i < (ts_count-1) &&
 					data[ndata[0]*var[node]+index[ts_min+i+1]]
 				 == data[ndata[0]*var[node]+index[ts_min+i]] ) i++;
 
@@ -250,15 +251,15 @@ void bounds_by_esd(double *data, int *class, int *ndata, int *dim,
 		bounds[node] = Lower;
 		bounds[treesize[0]+node] = Upper;
 	}
-	Free(index);
-	Free(local_index);
-	Free(aux_index);
-	Free(for_sort);
-	Free(split_indices);
-	Free(datarange_starts);
-	Free(datarange_sizes);
-	Free(LHSErr);
-	Free(RHSErr);
-	Free(ThreshErrs);
+	R_Free(index);
+	R_Free(local_index);
+	R_Free(aux_index);
+	R_Free(for_sort);
+	R_Free(split_indices);
+	R_Free(datarange_starts);
+	R_Free(datarange_sizes);
+	R_Free(LHSErr);
+	R_Free(RHSErr);
+	R_Free(ThreshErrs);
 }
 

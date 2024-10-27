@@ -1,9 +1,13 @@
 Package: SplitSoftening
 Encoding: UTF-8
-Version: 2.1-0
+Version: 2.1-1
 Title: Softening Splits in Decision Trees
-Author: Jakub Dvorak
+Author: Jakub Dvorak [aut, cre]
 Maintainer: Jakub Dvorak <JakubDvorak@email.cz>
+Authors@R: person(given = "Jakub",
+				family = "Dvorak",
+				role = c("aut", "cre"),
+				email = "JakubDvorak@email.cz")
 Depends: R (>= 3.0.0)
 Enhances: tree
 Suggests: gsl
@@ -12,6 +16,6 @@ Description: Allows to produce and use classification trees with soft (probabili
 License: GPL (>= 2)
 RoxygenNote: 7.1.2
 NeedsCompilation: yes
-Packaged: 2021-10-08 09:36:15 UTC; jakub
+Packaged: 2024-10-27 20:15:56 UTC; jakub
 Repository: CRAN
-Date/Publication: 2021-10-08 10:40:02 UTC
+Date/Publication: 2024-10-27 20:50:02 UTC
